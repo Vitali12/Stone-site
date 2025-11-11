@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PhoneIcon, EnvelopeIcon, MapIcon } from './IconComponents';
 
@@ -13,7 +12,7 @@ const ContactInfo: React.FC = () => (
                 <MapIcon className="w-7 h-7 mt-1 text-green-400 flex-shrink-0" />
                 <div>
                     <h3 className="font-semibold">Адрес</h3>
-                    <p className="text-blue-200">185910 г.Петрозаводск, ул. Пушкинская, д. 11, корпус Института геологии, каб.223-В</p>
+                    <p className="text-blue-200">185910 г.Петрозаводск, ул.Пушкинская, д.10, корпус Института геологии, каб. 223</p>
                 </div>
             </li>
             <li className="flex items-start gap-4">
@@ -43,21 +42,53 @@ const ContactInfo: React.FC = () => (
 const ContactForm: React.FC = () => {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
     const [status, setStatus] = useState('');
+    const [error, setError] = useState('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('sending');
-        // Simulate form submission
-        setTimeout(() => {
-            console.log('Form submitted:', formData);
-            setStatus('success');
-            setFormData({ name: '', email: '', message: '' });
-        }, 1500);
+        setError('');
+
+        // ----------------------------------------------------------------------------------
+        // ВАЖНО: Замените 'mqkrvgzz' на ID вашей формы с сайта formspree.io
+        // 1. Зайдите на https://formspree.io
+        // 2. Создайте новую форму и укажите email для получения сообщений: i@vshekov.ru
+        // 3. Скопируйте уникальный ID из URL формы и вставьте его сюда.
+        // ----------------------------------------------------------------------------------
+        const FORM_ENDPOINT = "https://formspree.io/f/mqkrvgzz"; 
+
+        try {
+            const response = await fetch(FORM_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                setStatus('success');
+                setFormData({ name: '', email: '', message: '' });
+                 setTimeout(() => setStatus(''), 5000); // Сбросить статус через 5 секунд
+            } else {
+                const data = await response.json();
+                if (data.errors) {
+                    setError(data.errors.map((err: { message: string }) => err.message).join(', '));
+                } else {
+                    setError('Произошла ошибка при отправке сообщения.');
+                }
+                setStatus('error');
+            }
+        } catch (err) {
+            setError('Произошла ошибка сети. Попробуйте еще раз.');
+            setStatus('error');
+        }
     };
 
     return (
@@ -77,11 +108,12 @@ const ContactForm: React.FC = () => {
                     <textarea name="message" id="message" rows={5} required value={formData.message} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                 </div>
                 <div>
-                    <button type="submit" disabled={status === 'sending'} className="w-full bg-green-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-green-700 transition-colors disabled:bg-green-400">
+                    <button type="submit" disabled={status === 'sending'} className="w-full bg-green-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-green-700 transition-colors disabled:bg-green-400 disabled:cursor-not-allowed">
                         {status === 'sending' ? 'Отправка...' : 'Отправить сообщение'}
                     </button>
                 </div>
-                {status === 'success' && <p className="text-green-600">Ваше сообщение успешно отправлено!</p>}
+                {status === 'success' && <p className="text-green-600 font-medium text-center">Ваше сообщение успешно отправлено!</p>}
+                {status === 'error' && <p className="text-red-600 font-medium text-center">Ошибка: {error}</p>}
             </form>
         </div>
     );

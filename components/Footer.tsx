@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { BeakerIcon, PhoneIcon, EnvelopeIcon, MapIcon } from './IconComponents';
@@ -12,7 +11,7 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
               <BeakerIcon className="w-8 h-8 text-green-500" />
-              <span className="text-2xl font-bold">GeoLab</span>
+              <span className="text-xl font-bold">ИЦ ИГ КарНЦ РАН</span>
             </Link>
             <p className="text-gray-400">
               Ваш надежный партнер в области испытаний строительных материалов и геологических изысканий.
@@ -47,15 +46,15 @@ const Footer: React.FC = () => {
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <MapIcon className="w-5 h-5 mt-1 text-green-500 flex-shrink-0" />
-                <span className="text-gray-400">185035 г. Петрозаводск, ул. Пушкинская, д. 11, корпус Института геологии, каб.223</span>
+                <span className="text-gray-400">185910 г.Петрозаводск, ул.Пушкинская, д.10, корпус Института геологии, каб. 223</span>
               </li>
               <li className="flex items-center gap-3">
                 <PhoneIcon className="w-5 h-5 text-green-500 flex-shrink-0" />
-                <a href="tel:+74951234567" className="text-gray-400 hover:text-white transition-colors">+7 (921) 726-02-73</a>
+                <a href="tel:+79217260273" className="text-gray-400 hover:text-white transition-colors">+7 (921) 726-02-73</a>
               </li>
               <li className="flex items-center gap-3">
                 <EnvelopeIcon className="w-5 h-5 text-green-500 flex-shrink-0" />
-                <a href="mailto:i@vshekov.ru" className="text-gray-400 hover:text-white transition-colors">info@geolab.test</a>
+                <a href="mailto:i@vshekov.ru" className="text-gray-400 hover:text-white transition-colors">i@vshekov.ru</a>
               </li>
             </ul>
           </div>
@@ -63,7 +62,7 @@ const Footer: React.FC = () => {
       </div>
       <div className="bg-gray-900 py-4">
         <div className="container mx-auto px-4 text-center text-gray-500 text-sm">
-          &copy; {new Date().getFullYear()} GeoLab. Все права защищены.
+          &copy; {new Date().getFullYear()} ИЦ ИГ КарНЦ РАН. Все права защищены.
         </div>
       </div>
     </footer>

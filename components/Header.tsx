@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { NAV_LINKS } from '../constants';
@@ -85,7 +84,7 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center h-20">
           <Link to="/" className="flex items-center gap-2">
             <BeakerIcon className="w-8 h-8 text-blue-800" />
-            <span className="text-2xl font-bold text-gray-800">GeoLab</span>
+            <span className="text-xl font-bold text-gray-800">ИЦ ИГ КарНЦ РАН</span>
           </Link>
 
           <nav className="hidden lg:flex items-center">
