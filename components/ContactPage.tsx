@@ -40,13 +40,18 @@ const ContactInfo: React.FC = () => (
 
 
 const ContactForm: React.FC = () => {
-    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const [formData, setFormData] = useState({ name: '', email: '', phone: '', commentary: '', consent: false });
     const [status, setStatus] = useState('');
     const [error, setError] = useState('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const { name, value, type } = e.target;
+        if (type === 'checkbox') {
+            const { checked } = e.target as HTMLInputElement;
+            setFormData(prev => ({ ...prev, [name]: checked }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -74,7 +79,7 @@ const ContactForm: React.FC = () => {
 
             if (response.ok) {
                 setStatus('success');
-                setFormData({ name: '', email: '', message: '' });
+                setFormData({ name: '', email: '', phone: '', commentary: '', consent: false });
                  setTimeout(() => setStatus(''), 5000); // Сбросить статус через 5 секунд
             } else {
                 const data = await response.json();
@@ -95,20 +100,30 @@ const ContactForm: React.FC = () => {
         <div className="bg-white p-8 lg:p-12 rounded-lg shadow-xl">
             <h2 className="text-3xl font-bold mb-6 text-gray-800">Форма обратной связи</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Ваше имя</label>
-                    <input type="text" name="name" id="name" required value={formData.name} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                 <div>
+                    <input type="text" name="name" id="name" value={formData.name} onChange={handleChange} placeholder="Ваше имя:" className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" />
                 </div>
                 <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" name="email" id="email" required value={formData.email} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <input type="email" name="email" id="email" required value={formData.email} onChange={handleChange} placeholder="* E-mail:" className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" />
                 </div>
                 <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Сообщение</label>
-                    <textarea name="message" id="message" rows={5} required value={formData.message} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <input type="tel" name="phone" id="phone" required value={formData.phone} onChange={handleChange} placeholder="* Телефон:" className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white" />
                 </div>
                 <div>
-                    <button type="submit" disabled={status === 'sending'} className="w-full bg-green-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-green-700 transition-colors disabled:bg-green-400 disabled:cursor-not-allowed">
+                    <textarea name="commentary" id="commentary" rows={5} value={formData.commentary} onChange={handleChange} placeholder="Комментарий:" className="w-full px-4 py-3 bg-gray-100 border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white"></textarea>
+                </div>
+                <div className="flex items-start">
+                    <div className="flex items-center h-5">
+                        <input id="consent" name="consent" type="checkbox" required checked={formData.consent} onChange={handleChange} className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded" />
+                    </div>
+                    <div className="ml-3 text-sm">
+                        <label htmlFor="consent" className="text-gray-700">
+                            Я выражаю согласие на передачу и обработку персональных данных в соответствии с <a href="#" className="font-medium text-blue-600 hover:underline">Политикой конфиденциальности</a>: <span className="text-red-500">*</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" disabled={status === 'sending' || !formData.consent} className="w-full bg-green-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-green-700 transition-colors disabled:bg-green-400 disabled:cursor-not-allowed">
                         {status === 'sending' ? 'Отправка...' : 'Отправить сообщение'}
                     </button>
                 </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { BENEFITS, POPULAR_SERVICES, TESTIMONIALS, ARTICLES } from '../constants';
@@ -64,7 +63,6 @@ const ServiceCard: React.FC<{ service: typeof POPULAR_SERVICES[0] }> = ({ servic
                 </div>
                 <div>
                     <h3 className="text-lg font-bold text-gray-800">{service.title}</h3>
-                    <p className="text-green-600 font-semibold">{service.price}</p>
                 </div>
             </div>
             <p className="text-gray-600 mb-4 h-20">{service.description}</p>

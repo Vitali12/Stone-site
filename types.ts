@@ -1,10 +1,10 @@
-
 import React from 'react';
 
 export interface NavLink {
   label: string;
   href: string;
   children?: NavLink[];
+  isProtected?: boolean;
 }
 
 export interface Benefit {
@@ -18,7 +18,7 @@ export interface Service {
   category: string;
   title: string;
   description: string;
-  price: string;
+  price?: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
@@ -34,4 +34,12 @@ export interface Article {
   excerpt: string;
   imageUrl: string;
   href: string;
+}
+
+export interface GostDocument {
+  id: string;
+  gostNumber: string;
+  title: string;
+  fileType: 'pdf' | 'rtf';
+  fileName: string;
 }
