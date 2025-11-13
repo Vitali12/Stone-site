@@ -1,4 +1,4 @@
-import type { NavLink, Benefit, Service, Testimonial, Article, GostDocument } from './types';
+import type { NavLink, Benefit, Service, Testimonial, Article, GostDocument, Order } from './types';
 import { BeakerIcon, ChartBarIcon, DocumentTextIcon, ShieldCheckIcon, ScaleIcon, SparklesIcon, UsersIcon, GlobeAltIcon, MapIcon, PhoneIcon, EnvelopeIcon, CubeIcon, AcademicCapIcon, BookOpenIcon, VideoCameraIcon, QuestionMarkCircleIcon, TrophyIcon, StarIcon, BriefcaseIcon, UserCircleIcon, ShoppingCartIcon, MapPinIcon, DocumentDuplicateIcon } from './components/IconComponents';
 import React from 'react';
 
@@ -18,7 +18,6 @@ export const NAV_LINKS: NavLink[] = [
   {
     label: '🔬 Услуги',
     href: '/services',
-    isProtected: true,
     children: [
         { label: '🪨 Облицовочный камень (ГОСТ 30629)', href: '/services/facing_stone' },
         { label: '💎 Щебень стандартный (ГОСТ 8269.0)', href: '/services/gravel_standard' },
@@ -27,13 +26,11 @@ export const NAV_LINKS: NavLink[] = [
         { label: '🏖️ Песок природный (ГОСТ 8735)', href: '/services/sand_natural' },
         { label: '🔬 Химический анализ (ГОСТ 8269.1)', href: '/services/chemical' },
         { label: '☢️ Определение радионуклидов (ГОСТ 30108)', href: '/services/radiology' },
-        { label: '🧮 Калькулятор стоимости', href: '/services/calculator' },
     ]
   },
   {
     label: '📚 База знаний',
     href: '/knowledge',
-    isProtected: true,
     children: [
       { label: '📜 ГОСТы и нормативы', href: '/knowledge/gosts' },
       { label: '🔬 Методики испытаний', href: '/knowledge/methods' },
@@ -51,15 +48,15 @@ export const NAV_LINKS: NavLink[] = [
         { label: '📊 Кейсы', href: '/portfolio/cases' },
     ]
   },
+   { label: '🧮 Расчет стоимости', href: '/services/calculator', isProtected: true },
   {
     label: '💻 Онлайн-сервисы',
     href: '/online',
-    isProtected: true,
      children: [
-        { label: '👤 Личный кабинет', href: '/online/account' },
-        { label: '🛒 Онлайн-заказ', href: '/online/order' },
-        { label: '📍 Трекинг заказов', href: '/online/tracking' },
-        { label: '📄 Документы', href: '/online/documents' },
+        { label: '👤 Личный кабинет', href: '/online/account', isProtected: true },
+        { label: '🛒 Онлайн-заказ', href: '/online/order', isProtected: true },
+        { label: '📍 Трекинг заказов', href: '/online/tracking', isProtected: true },
+        { label: '📄 Документы', href: '/online/documents', isProtected: true },
     ]
   },
   { label: '📞 Контакты', href: '/contacts' },
@@ -339,3 +336,38 @@ export const COMPREHENSIVE_SERVICES: ComprehensiveService[] = CALCULATOR_DATA
             icon,
         }));
     });
+
+export const MOCK_ORDERS: Order[] = [
+    {
+        id: 'З-1056',
+        date: '2024-07-15',
+        description: 'Комплексное испытание щебня фр. 5-20, ГОСТ 8269.0',
+        status: 'Завершен',
+        reportUrl: '/assets/docs/mock-report.pdf'
+    },
+    {
+        id: 'З-1055',
+        date: '2024-07-10',
+        description: 'Определение морозостойкости облицовочных плит',
+        status: 'В работе',
+    },
+    {
+        id: 'З-1054',
+        date: '2024-07-08',
+        description: 'Радиологический контроль партии песка',
+        status: 'Завершен',
+        reportUrl: '/assets/docs/mock-report.pdf'
+    },
+    {
+        id: 'З-1052',
+        date: '2024-06-25',
+        description: 'Химический анализ породы',
+        status: 'Ожидает оплаты',
+    },
+    {
+        id: 'З-1049',
+        date: '2024-06-12',
+        description: 'Испытание песка для строительных работ, ГОСТ 8735',
+        status: 'Отменен',
+    }
+];

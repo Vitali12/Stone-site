@@ -3,6 +3,8 @@ import { CALCULATOR_DATA } from '../constants';
 import type { CalcService } from '../constants';
 import { InfoModal } from './Modals';
 import { CubeIcon } from './IconComponents';
+import { useAuth } from '../hooks/useAuth';
+import type { SavedService } from '../types';
 
 interface SelectedService {
     id: string;
@@ -19,11 +21,13 @@ const PREP_SERVICE_ID_CORE = 'prep-1'; // Изготовление образц�
 const PREP_SERVICE_ID_LUMP = 'prep-3'; // Изготовление стандартных образцов из штуфа
 
 const Calculator: React.FC = () => {
+    const { saveCalculation } = useAuth();
     const [selectedServices, setSelectedServices] = useState<SelectedService[]>([]);
     const [autoPrepService, setAutoPrepService] = useState<SelectedService | null>(null);
     const [materialSource, setMaterialSource] = useState<'core' | 'lump' | 'ready'>('core');
     const [modalMethodService, setModalMethodService] = useState<CalcService | null>(null);
     const [modalSampleService, setModalSampleService] = useState<CalcService | null>(null);
+    const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
     const allCalcServices = useMemo(() => CALCULATOR_DATA.flatMap(gost => gost.services), []);
     
@@ -79,6 +83,30 @@ const Calculator: React.FC = () => {
         const autoCost = autoPrepService ? autoPrepService.price * autoPrepService.quantity : 0;
         return manualCost + autoCost;
     }, [selectedServices, autoPrepService]);
+
+    const handleSaveCalculation = () => {
+        const allServicesToSave: SavedService[] = selectedServices.map(s => {
+            const info = allCalcServices.find(i => i.id === s.id)!;
+            return { id: s.id, name: info.name, quantity: s.quantity, price: s.price };
+        });
+
+        if (autoPrepService) {
+             const info = allCalcServices.find(i => i.id === autoPrepService.id)!;
+             allServicesToSave.push({ id: autoPrepService.id, name: `${info.name} (авто)`, quantity: autoPrepService.quantity, price: autoPrepService.price });
+        }
+
+        try {
+            saveCalculation({
+                totalCost,
+                services: allServicesToSave,
+            });
+            setSaveStatus('success');
+            setTimeout(() => setSaveStatus('idle'), 3000);
+        } catch (error) {
+            setSaveStatus('error');
+            setTimeout(() => setSaveStatus('idle'), 3000);
+        }
+    };
 
     const selectedServiceIds = useMemo(() => new Set(selectedServices.map(s => s.id)), [selectedServices]);
 
@@ -246,6 +274,19 @@ const Calculator: React.FC = () => {
                                 <span className="text-green-600">{totalCost.toLocaleString('ru-RU')} ₽</span>
                             </div>
                             <p className="text-sm text-gray-500 mt-2">Стоимость является предварительной и может быть уточнена менеджером.</p>
+                            
+                            <div className="mt-6">
+                                <button 
+                                    onClick={handleSaveCalculation}
+                                    disabled={selectedServices.length === 0}
+                                    className="w-full bg-blue-800 text-white px-6 py-3 rounded-md font-semibold hover:bg-blue-900 transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
+                                >
+                                    Сохранить расчет в личный кабинет
+                                </button>
+                                {saveStatus === 'success' && <p className="text-green-600 text-center mt-2 text-sm font-medium">Расчет успешно сохранен!</p>}
+                                {saveStatus === 'error' && <p className="text-red-600 text-center mt-2 text-sm font-medium">Ошибка сохранения. Попробуйте снова.</p>}
+                            </div>
+
                         </div>
                     </div>
                 </div>

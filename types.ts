@@ -43,3 +43,28 @@ export interface GostDocument {
   fileType: 'pdf' | 'rtf';
   fileName: string;
 }
+
+export type OrderStatus = 'В работе' | 'Ожидает оплаты' | 'Завершен' | 'Отменен';
+
+export interface Order {
+  id: string;
+  date: string;
+  description: string;
+  status: OrderStatus;
+  reportUrl?: string;
+}
+
+export interface SavedService {
+    id: string;
+    name: string;
+    quantity: number;
+    price: number;
+}
+
+export interface UserDocument {
+    id: string;
+    date: string;
+    type: 'Расчет';
+    totalCost: number;
+    services: SavedService[];
+}
