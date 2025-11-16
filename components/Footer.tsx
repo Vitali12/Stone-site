@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BeakerIcon, PhoneIcon, EnvelopeIcon, MapIcon } from './IconComponents';
+import { BeakerIcon, PhoneIcon, EnvelopeIcon, MapIcon, ChatBubbleBottomCenterTextIcon } from './IconComponents';
 
 const Footer: React.FC = () => {
   return (
@@ -55,6 +55,12 @@ const Footer: React.FC = () => {
               <li className="flex items-center gap-3">
                 <EnvelopeIcon className="w-5 h-5 text-green-500 flex-shrink-0" />
                 <a href="mailto:i@vshekov.ru" className="text-gray-400 hover:text-white transition-colors">i@vshekov.ru</a>
+              </li>
+               <li className="flex items-start gap-3">
+                  <ChatBubbleBottomCenterTextIcon className="w-5 h-5 mt-1 text-green-500 flex-shrink-0" />
+                  <span className="text-gray-400">
+                      Вы можете получить более детальную информацию у нашего Ассистента: <a href="https://t.me/Shekov_Assistant_Bot" target="_blank" rel="noopener noreferrer" className="text-white hover:underline break-all">https://t.me/Shekov_Assistant_Bot</a>
+                  </span>
               </li>
             </ul>
           </div>

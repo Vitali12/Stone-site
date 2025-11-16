@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PhoneIcon, EnvelopeIcon, MapIcon } from './IconComponents';
+import { PhoneIcon, EnvelopeIcon, MapIcon, ChatBubbleBottomCenterTextIcon } from './IconComponents';
 
 const ContactInfo: React.FC = () => (
     <div className="bg-blue-800 text-white p-8 lg:p-12 rounded-lg space-y-8">
@@ -27,6 +27,18 @@ const ContactInfo: React.FC = () => (
                 <div>
                     <h3 className="font-semibold">Email</h3>
                     <a href="mailto:i@vshekov.ru" className="text-blue-200 hover:text-white transition-colors">i@vshekov.ru</a>
+                </div>
+            </li>
+            <li className="flex items-start gap-4">
+                <ChatBubbleBottomCenterTextIcon className="w-7 h-7 text-green-400 flex-shrink-0" />
+                <div>
+                    <h3 className="font-semibold">Telegram Ассистент</h3>
+                    <p className="text-blue-200">
+                        Вы можете получить более детальную информацию у нашего Ассистента:{' '}
+                        <a href="https://t.me/Shekov_Assistant_Bot" target="_blank" rel="noopener noreferrer" className="text-white hover:underline break-all">
+                            https://t.me/Shekov_Assistant_Bot
+                        </a>
+                    </p>
                 </div>
             </li>
         </ul>

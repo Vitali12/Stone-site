@@ -13,6 +13,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import AuthModal from './components/AuthModal';
 import ProtectedRoute from './components/ProtectedRoute';
 import AccountPage from './components/account/AccountPage';
+import RadiologyArticlePage from './components/RadiologyArticlePage';
 
 const App: React.FC = () => {
   return (
@@ -33,6 +34,7 @@ const App: React.FC = () => {
               <Route path="/services" element={<ServicesPage />} />
               
               <Route path="/knowledge/gosts" element={<GostPage />} />
+              <Route path="/knowledge/articles/radiology-control" element={<RadiologyArticlePage />} />
               <Route path="/knowledge" element={<GostPage />} />
               <Route path="/knowledge/*" element={<PlaceholderPage title="База знаний" />} />
               

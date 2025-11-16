@@ -149,7 +149,7 @@ export const ARTICLES: Article[] = [
         title: 'Зачем нужен радиологический контроль материалов?',
         excerpt: 'Разбираемся, почему проверка стройматериалов на радиоактивность является обязательным этапом...',
         imageUrl: 'https://picsum.photos/600/400?random=6',
-        href: '#',
+        href: '/knowledge/articles/radiology-control',
     }
 ];
 
