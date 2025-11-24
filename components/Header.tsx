@@ -43,11 +43,18 @@ const UserMenu: React.FC = () => {
                 <ChevronDownIcon className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
             {isOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-md border border-gray-100 z-30">
+                <div className="absolute top-full right-0 mt-2 w-56 bg-white shadow-lg rounded-md border border-gray-100 z-30">
                     <ul className="py-1">
                         <li>
                             <Link to="/online/account/profile" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50">Профиль</Link>
                         </li>
+                        {user.role === 'admin' && (
+                            <li>
+                                <Link to="/admin" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50">
+                                    Панель администратора
+                                </Link>
+                            </li>
+                        )}
                         <li>
                             <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
                                 Выйти
@@ -248,6 +255,11 @@ const Header: React.FC = () => {
                  {isAuthenticated ? (
                     <div className="text-center">
                         <p className="font-medium mb-2">{user?.email}</p>
+                         {user?.role === 'admin' && (
+                             <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="w-full bg-blue-100 text-blue-800 py-3 rounded-lg font-semibold hover:bg-blue-200 text-center block mb-3">
+                                Панель администратора
+                            </Link>
+                        )}
                         <button onClick={() => { logout(); navigate('/'); setIsMenuOpen(false); }} className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 text-center block">
                             Выйти
                         </button>

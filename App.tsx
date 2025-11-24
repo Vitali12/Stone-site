@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './components/HomePage';
@@ -9,15 +9,24 @@ import PlaceholderPage from './components/PlaceholderPage';
 import Calculator from './components/Calculator';
 import GostPage from './components/GostPage';
 import AboutPage from './components/AboutPage';
-import { AuthProvider } from './contexts/AuthContext';
 import AuthModal from './components/AuthModal';
 import ProtectedRoute from './components/ProtectedRoute';
 import AccountPage from './components/account/AccountPage';
 import RadiologyArticlePage from './components/RadiologyArticlePage';
+import { useAuth } from './hooks/useAuth';
+import AdminPage from './components/admin/AdminPage';
+import UserDocumentsPage from './components/admin/UserDocumentsPage';
+
+const AdminRoute: React.FC<{ element: React.ReactElement }> = ({ element }) => {
+    const { user } = useAuth();
+    if (!user || user.role !== 'admin') {
+        return <Navigate to="/online/account" replace />;
+    }
+    return element;
+};
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
       <HashRouter>
         <div className="flex flex-col min-h-screen bg-gray-50">
           <Header />
@@ -45,13 +54,16 @@ const App: React.FC = () => {
               <Route path="/online/documents" element={<ProtectedRoute element={<PlaceholderPage title="Документы" />} />} />
               <Route path="/online" element={<ProtectedRoute element={<AccountPage />} />} />
 
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminRoute element={<AdminPage />} />} />
+              <Route path="/admin/user/:email" element={<AdminRoute element={<UserDocumentsPage />} />} />
+
             </Routes>
           </main>
           <Footer />
         </div>
         <AuthModal />
       </HashRouter>
-    </AuthProvider>
   );
 };
 

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import type { UserDocument } from '../../types';
-import { DocumentTextIcon, SearchIcon } from '../IconComponents';
+import { DocumentTextIcon, SearchIcon, TrashIcon } from '../IconComponents';
 import { InfoModal } from '../Modals';
 
 const CalculationDetailsModal: React.FC<{ document: UserDocument; onClose: () => void }> = ({ document, onClose }) => {
+    if (document.type !== 'Расчет') return null;
+
     const content = (
         <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4 text-sm">
@@ -20,7 +22,7 @@ const CalculationDetailsModal: React.FC<{ document: UserDocument; onClose: () =>
             <div className="border-t pt-4">
                 <h4 className="font-semibold text-lg mb-2 text-gray-800">Состав расчета:</h4>
                 <ul className="space-y-2 max-h-60 overflow-y-auto pr-2">
-                    {document.services.map(service => (
+                    {document.services?.map(service => (
                         <li key={service.id} className="flex justify-between items-center text-sm p-2 bg-gray-50 rounded-md">
                             <span className="flex-1 pr-2">{service.name} (x{service.quantity})</span>
                             <span className="font-medium">{(service.price * service.quantity).toLocaleString('ru-RU')} ₽</span>
@@ -30,7 +32,7 @@ const CalculationDetailsModal: React.FC<{ document: UserDocument; onClose: () =>
             </div>
             <div className="border-t pt-4 mt-4 flex justify-between items-center font-bold text-xl">
                 <span>Итого:</span>
-                <span className="text-green-600">{document.totalCost.toLocaleString('ru-RU')} ₽</span>
+                <span className="text-green-600">{document.totalCost?.toLocaleString('ru-RU')} ₽</span>
             </div>
         </div>
     );
@@ -40,12 +42,36 @@ const CalculationDetailsModal: React.FC<{ document: UserDocument; onClose: () =>
 
 
 const Documents: React.FC = () => {
-    const { documents } = useAuth();
+    const { documents, deleteCurrentUserDocument } = useAuth();
     const [selectedDocument, setSelectedDocument] = useState<UserDocument | null>(null);
+
+    const handleDelete = (docId: string) => {
+        if(window.confirm('Вы уверены, что хотите удалить этот расчет?')) {
+            deleteCurrentUserDocument(docId);
+        }
+    }
+    
+    const handleViewFile = (fileName?: string) => {
+        if (!fileName) {
+            alert('Файл для этого документа не найден.');
+            return;
+        };
+        const filePath = `/assets/docs/${fileName}`;
+        window.open(filePath, '_blank', 'noopener,noreferrer');
+    }
+
+    const getDocumentTypeClass = (type: UserDocument['type']) => {
+        switch(type) {
+            case 'Расчет': return 'bg-purple-100 text-purple-800';
+            case 'Договор': return 'bg-blue-100 text-blue-800';
+            case 'Протокол': return 'bg-green-100 text-green-800';
+            default: return 'bg-gray-100 text-gray-800';
+        }
+    }
 
     return (
         <>
-            {selectedDocument && (
+            {selectedDocument && selectedDocument.type === 'Расчет' && (
                 <CalculationDetailsModal document={selectedDocument} onClose={() => setSelectedDocument(null)} />
             )}
             <div>
@@ -65,7 +91,7 @@ const Documents: React.FC = () => {
                                         Тип
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Сумма
+                                        Сумма / Файл
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Действия
@@ -78,20 +104,31 @@ const Documents: React.FC = () => {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{doc.id}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.date}</td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getDocumentTypeClass(doc.type)}`}>
                                                 {doc.type}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">{doc.totalCost.toLocaleString('ru-RU')} ₽</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
+                                            {doc.type === 'Расчет' ? `${doc.totalCost?.toLocaleString('ru-RU')} ₽` : doc.fileName || 'Нет файла'}
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <button
-                                                onClick={() => setSelectedDocument(doc)}
-                                                className="text-blue-600 hover:text-blue-900 flex items-center gap-1"
-                                                title="Посмотреть детали расчета"
-                                            >
-                                                <SearchIcon className="w-4 h-4" />
-                                                Просмотреть
-                                            </button>
+                                            {doc.type === 'Расчет' ? (
+                                                 <div className="flex items-center gap-4">
+                                                    <button onClick={() => setSelectedDocument(doc)} className="text-blue-600 hover:text-blue-900 flex items-center gap-1" title="Посмотреть детали расчета">
+                                                        <SearchIcon className="w-4 h-4" />
+                                                        Детали
+                                                    </button>
+                                                    <button onClick={() => handleDelete(doc.id)} className="text-red-600 hover:text-red-900 flex items-center gap-1" title="Удалить расчет">
+                                                        <TrashIcon className="w-4 h-4" />
+                                                        Удалить
+                                                    </button>
+                                                 </div>
+                                            ) : (
+                                                <button onClick={() => handleViewFile(doc.fileName)} className="text-blue-600 hover:text-blue-900 flex items-center gap-1" title="Просмотреть файл">
+                                                    <DocumentTextIcon className="w-4 h-4" />
+                                                    Просмотреть
+                                                </button>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}

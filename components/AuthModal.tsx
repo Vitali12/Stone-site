@@ -53,13 +53,30 @@ const AuthModal: React.FC = () => {
             setIsLoading(false);
         }
     };
+
+    const handleBackdropClick = (e: React.MouseEvent) => {
+        // Закрываем модальное окно только если клик был по самому затемненному фону (currentTarget),
+        // а не по его дочерним элементам (target).
+        if (e.target === e.currentTarget) {
+            hideAuthModal();
+        }
+    };
     
     if (!isModalOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4" onClick={hideAuthModal} role="dialog" aria-modal="true">
-            <div className="bg-white rounded-lg shadow-2xl max-w-md w-full relative" onClick={e => e.stopPropagation()}>
-                <button onClick={hideAuthModal} className="absolute top-3 right-3 text-gray-400 hover:text-gray-700" aria-label="Закрыть">
+        <div 
+            className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4" 
+            onClick={handleBackdropClick} 
+            role="dialog" 
+            aria-modal="true"
+        >
+            <div className="bg-white rounded-lg shadow-2xl max-w-md w-full relative">
+                <button 
+                    onClick={hideAuthModal} 
+                    className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 z-10" 
+                    aria-label="Закрыть"
+                >
                     <XIcon className="w-6 h-6" />
                 </button>
 
@@ -102,6 +119,9 @@ const AuthModal: React.FC = () => {
                             {isLoading ? 'Загрузка...' : (view === 'login' ? 'Войти' : 'Зарегистрироваться')}
                         </button>
                     </form>
+                     <p className="text-center text-gray-500 mt-4 text-xs">
+                        Для теста: используйте <strong>любой email/пароль</strong> для входа как пользователь, или <strong>admin@test.com</strong> с любым паролем для входа как администратор.
+                    </p>
                 </div>
             </div>
         </div>

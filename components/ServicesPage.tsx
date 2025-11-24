@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { COMPREHENSIVE_SERVICES, SERVICE_CATEGORIES } from '../constants';
@@ -6,21 +7,28 @@ import { ChevronRightIcon } from './IconComponents';
 import { InfoModal } from './Modals';
 
 const ServiceCard: React.FC<{ service: ComprehensiveService; onDetailsClick: (service: ComprehensiveService) => void; }> = ({ service, onDetailsClick }) => (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 group">
-        <div className="p-6 flex flex-col h-full">
-            <div className="flex items-start gap-4 mb-4">
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 group flex flex-col h-full">
+        <div className="p-6 flex flex-col flex-grow">
+            <div className="flex items-start gap-4 mb-2">
                 <div className="flex-shrink-0 bg-green-100 p-3 rounded-full">
                     <service.icon className="w-7 h-7 text-green-600" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-800 mt-1">{service.title}</h3>
+                <div>
+                    <span className="text-xs font-bold text-blue-800 bg-blue-100 px-2 py-1 rounded-full mb-2 inline-block">
+                        {service.gost}
+                    </span>
+                    <h3 className="text-lg font-bold text-gray-800 leading-snug">{service.title}</h3>
+                </div>
             </div>
-            <p className="text-gray-600 mb-4 flex-grow line-clamp-4">{service.description}</p>
-            <button 
-                onClick={() => onDetailsClick(service)}
-                className="font-semibold text-blue-800 hover:text-blue-600 flex items-center gap-1 mt-auto self-start"
-            >
-                Подробнее <ChevronRightIcon className="w-4 h-4" />
-            </button>
+            
+            <div className="mt-auto pt-4">
+                 <button 
+                    onClick={() => onDetailsClick(service)}
+                    className="font-semibold text-blue-800 hover:text-blue-600 flex items-center gap-1 text-sm"
+                >
+                    Подробнее <ChevronRightIcon className="w-4 h-4" />
+                </button>
+            </div>
         </div>
     </div>
 );

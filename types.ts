@@ -64,7 +64,8 @@ export interface SavedService {
 export interface UserDocument {
     id: string;
     date: string;
-    type: 'Расчет';
-    totalCost: number;
-    services: SavedService[];
+    type: 'Расчет' | 'Договор' | 'Протокол';
+    totalCost?: number;
+    services?: SavedService[];
+    fileName?: string;
 }

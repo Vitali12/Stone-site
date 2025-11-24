@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { BENEFITS, POPULAR_SERVICES, TESTIMONIALS, ARTICLES } from '../constants';
@@ -55,18 +56,18 @@ const BenefitsSection: React.FC = () => (
 );
 
 const ServiceCard: React.FC<{ service: typeof POPULAR_SERVICES[0] }> = ({ service }) => (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 group">
-        <div className="p-6">
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 group flex flex-col h-full">
+        <div className="p-6 flex flex-col flex-grow">
             <div className="flex items-center gap-4 mb-4">
                 <div className="flex-shrink-0 bg-green-100 p-3 rounded-full">
                     <service.icon className="w-7 h-7 text-green-600" />
                 </div>
                 <div>
-                    <h3 className="text-lg font-bold text-gray-800">{service.title}</h3>
+                    <h3 className="text-lg font-bold text-gray-800 leading-snug">{service.title}</h3>
                 </div>
             </div>
-            <p className="text-gray-600 mb-4 h-20">{service.description}</p>
-            <Link to={`/services/${service.category}`} className="font-semibold text-blue-800 hover:text-blue-600 flex items-center gap-1">
+            <p className="text-gray-600 mb-6 flex-grow">{service.description}</p>
+            <Link to={`/services/${service.category}`} className="font-semibold text-blue-800 hover:text-blue-600 flex items-center gap-1 mt-auto inline-flex w-fit">
                 Подробнее <ChevronRightIcon className="w-4 h-4" />
             </Link>
         </div>
@@ -170,6 +171,33 @@ const NewsSection: React.FC = () => (
     </section>
 );
 
+const CTASection: React.FC = () => (
+  <section className="bg-gray-50">
+    <div className="container mx-auto px-4 py-16">
+        <div className="bg-gradient-to-r from-blue-800 to-blue-600 text-white rounded-lg shadow-xl p-10 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold">Готовы начать проект?</h2>
+          <p className="mt-4 max-w-2xl mx-auto text-lg text-blue-200">
+            Свяжитесь с нами для бесплатной консультации или ознакомьтесь с полным перечнем наших услуг.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/contacts"
+              className="w-full sm:w-auto bg-green-600 px-8 py-3 rounded-full font-semibold hover:bg-green-700 transition-all duration-300 transform hover:scale-105"
+            >
+              Связаться с нами
+            </Link>
+            <Link
+              to="/services"
+              className="w-full sm:w-auto bg-transparent border-2 border-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-blue-800 transition-all duration-300"
+            >
+              Все услуги
+            </Link>
+          </div>
+        </div>
+    </div>
+  </section>
+);
+
 
 const HomePage: React.FC = () => {
   return (
@@ -178,6 +206,7 @@ const HomePage: React.FC = () => {
       <BenefitsSection />
       <PopularServices />
       <TestimonialsSection />
+      <CTASection />
       <NewsSection />
     </>
   );
