@@ -13,11 +13,17 @@ const GostPage: React.FC = () => {
         });
     }, [searchTerm]);
 
-    const handleOpenFile = (fileName: string) => {
-        // Предполагается, что файлы находятся в публичной директории /assets/docs/
-        // Этот путь должен соответствовать структуре вашего проекта.
-        const filePath = `/assets/docs/${fileName}`;
-        window.open(filePath, '_blank', 'noopener,noreferrer');
+    const getDocUrl = (gostNumber: string) => {
+        // Формируем URL на основе номера ГОСТа для rosgosts.ru
+        // Пример: ГОСТ 9480-2012 -> gost_9480-2012.pdf
+        const formattedGost = gostNumber
+            .replace(/ГОСТ/gi, 'gost')
+            .replace(/\s+/g, '_')
+            .replace(/\//g, '_') // Safe replacement for slashes
+            .toLowerCase();
+            
+        // Используем предоставленный путь 91/100
+        return `https://rosgosts.ru/file/gost/91/100/${formattedGost}.pdf`;
     };
 
     return (
@@ -69,13 +75,15 @@ const GostPage: React.FC = () => {
                                             }`}>
                                                 {doc.fileType.toUpperCase()}
                                             </span>
-                                             <button 
-                                                onClick={() => handleOpenFile(doc.fileName)}
-                                                className="w-full sm:w-auto bg-green-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-green-700 transition-colors"
-                                                title={`Открыть файл ${doc.fileName}`}
+                                             <a 
+                                                href={getDocUrl(doc.gostNumber)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-full sm:w-auto bg-green-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-green-700 transition-colors inline-block text-center"
+                                                title={`Открыть/скачать ${doc.gostNumber}`}
                                             >
                                                 Открыть/скачать
-                                            </button>
+                                            </a>
                                         </div>
                                     </li>
                                 ))

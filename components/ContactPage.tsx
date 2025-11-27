@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { PhoneIcon, EnvelopeIcon, MapIcon, ChatBubbleBottomCenterTextIcon } from './IconComponents';
 
@@ -160,8 +161,16 @@ const ContactPage: React.FC = () => {
                 </div>
                 <div className="mt-12">
                      <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Мы на карте</h2>
-                     <div className="bg-gray-300 h-96 rounded-lg shadow-md flex items-center justify-center">
-                        <p className="text-gray-500">Здесь будет интерактивная карта</p>
+                     <div className="rounded-lg shadow-md overflow-hidden h-96 relative bg-gray-200">
+                        <iframe 
+                            src="https://yandex.ru/map-widget/v1/?mode=search&text=Россия%2C+Республика+Карелия%2C+Петрозаводск%2C+Пушкинская+улица%2C+11&z=17" 
+                            width="100%" 
+                            height="100%" 
+                            frameBorder="0" 
+                            allowFullScreen={true}
+                            className="absolute inset-0 w-full h-full"
+                            title="Карта проезда: Петрозаводск, ул. Пушкинская 11"
+                        ></iframe>
                      </div>
                 </div>
             </div>

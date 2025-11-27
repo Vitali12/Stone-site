@@ -8,23 +8,21 @@ import { InfoModal } from './Modals';
 
 const ServiceCard: React.FC<{ service: ComprehensiveService; onDetailsClick: (service: ComprehensiveService) => void; }> = ({ service, onDetailsClick }) => (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 group flex flex-col h-full">
-        <div className="p-6 flex flex-col flex-grow">
+        <div className="p-6 flex flex-col flex-grow relative">
             <div className="flex items-start gap-4 mb-2">
                 <div className="flex-shrink-0 bg-green-100 p-3 rounded-full">
                     <service.icon className="w-7 h-7 text-green-600" />
                 </div>
                 <div>
-                    <span className="text-xs font-bold text-blue-800 bg-blue-100 px-2 py-1 rounded-full mb-2 inline-block">
-                        {service.gost}
-                    </span>
                     <h3 className="text-lg font-bold text-gray-800 leading-snug">{service.title}</h3>
+                    <p className="text-sm text-gray-500 font-medium mt-1">{service.gost}</p>
                 </div>
             </div>
             
-            <div className="mt-auto pt-4">
+            <div className="mt-auto pt-4 pl-[3.75rem]">
                  <button 
                     onClick={() => onDetailsClick(service)}
-                    className="font-semibold text-blue-800 hover:text-blue-600 flex items-center gap-1 text-sm"
+                    className="font-semibold text-blue-800 hover:text-blue-600 flex items-center gap-1 text-sm transition-colors"
                 >
                     Подробнее <ChevronRightIcon className="w-4 h-4" />
                 </button>
