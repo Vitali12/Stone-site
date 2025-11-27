@@ -64,8 +64,17 @@ export interface SavedService {
 export interface UserDocument {
     id: string;
     date: string;
-    type: 'Расчет' | 'Договор' | 'Протокол';
+    type: 'Расчет' | 'Договор' | 'Протокол' | 'Отчет';
     totalCost?: number;
     services?: SavedService[];
     fileName?: string;
+    fileUrl?: string;
+}
+
+export interface UserProfile {
+    firstName: string;
+    lastName: string;
+    phone: string;
+    company: string;
+    position: string;
 }

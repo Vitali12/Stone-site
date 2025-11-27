@@ -51,13 +51,22 @@ const Documents: React.FC = () => {
         }
     }
     
-    const handleViewFile = (fileName?: string) => {
-        if (!fileName) {
+    const handleViewFile = (doc: UserDocument) => {
+        if (doc.fileUrl) {
+            // Open base64 or uploaded file
+            const newWindow = window.open();
+            if (newWindow) {
+                newWindow.document.write(`<iframe src="${doc.fileUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+            } else {
+                 alert("Разрешите всплывающие окна для просмотра файла.");
+            }
+        } else if (doc.fileName) {
+            // Fallback for mock files
+            const filePath = `/assets/docs/${doc.fileName}`;
+            window.open(filePath, '_blank', 'noopener,noreferrer');
+        } else {
             alert('Файл для этого документа не найден.');
-            return;
-        };
-        const filePath = `/assets/docs/${fileName}`;
-        window.open(filePath, '_blank', 'noopener,noreferrer');
+        }
     }
 
     const getDocumentTypeClass = (type: UserDocument['type']) => {
@@ -65,6 +74,7 @@ const Documents: React.FC = () => {
             case 'Расчет': return 'bg-purple-100 text-purple-800';
             case 'Договор': return 'bg-blue-100 text-blue-800';
             case 'Протокол': return 'bg-green-100 text-green-800';
+            case 'Отчет': return 'bg-orange-100 text-orange-800';
             default: return 'bg-gray-100 text-gray-800';
         }
     }
@@ -109,7 +119,11 @@ const Documents: React.FC = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
-                                            {doc.type === 'Расчет' ? `${doc.totalCost?.toLocaleString('ru-RU')} ₽` : doc.fileName || 'Нет файла'}
+                                            {doc.type === 'Расчет' ? `${doc.totalCost?.toLocaleString('ru-RU')} ₽` : (
+                                                <span title={doc.fileName} className="block max-w-[200px] truncate">
+                                                    {doc.fileName || 'Нет файла'}
+                                                </span>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             {doc.type === 'Расчет' ? (
@@ -124,7 +138,7 @@ const Documents: React.FC = () => {
                                                     </button>
                                                  </div>
                                             ) : (
-                                                <button onClick={() => handleViewFile(doc.fileName)} className="text-blue-600 hover:text-blue-900 flex items-center gap-1" title="Просмотреть файл">
+                                                <button onClick={() => handleViewFile(doc)} className="text-blue-600 hover:text-blue-900 flex items-center gap-1" title="Просмотреть файл">
                                                     <DocumentTextIcon className="w-4 h-4" />
                                                     Просмотреть
                                                 </button>

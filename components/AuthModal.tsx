@@ -8,7 +8,6 @@ const AuthModal: React.FC = () => {
     const [view, setView] = useState<'login' | 'register'>(defaultView);
     const [formData, setFormData] = useState({ email: '', password: '', confirmPassword: '' });
     const [error, setError] = useState('');
-    const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     
     useEffect(() => {
@@ -19,7 +18,6 @@ const AuthModal: React.FC = () => {
         if (!isModalOpen) {
             // Reset state when modal closes
             setError('');
-            setMessage('');
             setFormData({ email: '', password: '', confirmPassword: '' });
             setIsLoading(false);
         }
@@ -32,7 +30,6 @@ const AuthModal: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        setMessage('');
         setIsLoading(true);
 
         try {
@@ -41,8 +38,7 @@ const AuthModal: React.FC = () => {
                     throw new Error('Пароли не совпадают.');
                 }
                 await register(formData.email, formData.password);
-                setMessage('Регистрация прошла успешно! Мы отправили ссылку для подтверждения на ваш email. (Это симуляция, вы можете войти сразу).');
-                setView('login');
+                hideAuthModal();
             } else {
                 await login(formData.email, formData.password);
                 // The modal will be closed by the context on successful login
@@ -55,8 +51,6 @@ const AuthModal: React.FC = () => {
     };
 
     const handleBackdropClick = (e: React.MouseEvent) => {
-        // Закрываем модальное окно только если клик был по самому затемненному фону (currentTarget),
-        // а не по его дочерним элементам (target).
         if (e.target === e.currentTarget) {
             hideAuthModal();
         }
@@ -98,7 +92,6 @@ const AuthModal: React.FC = () => {
                     </p>
 
                     {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-4 text-sm" role="alert">{error}</div>}
-                    {message && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md mb-4 text-sm" role="alert">{message}</div>}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
@@ -119,9 +112,6 @@ const AuthModal: React.FC = () => {
                             {isLoading ? 'Загрузка...' : (view === 'login' ? 'Войти' : 'Зарегистрироваться')}
                         </button>
                     </form>
-                     <p className="text-center text-gray-500 mt-4 text-xs">
-                        Для теста: используйте <strong>любой email/пароль</strong> для входа как пользователь, или <strong>admin@test.com</strong> с любым паролем для входа как администратор.
-                    </p>
                 </div>
             </div>
         </div>

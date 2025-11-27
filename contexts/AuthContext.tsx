@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import type { UserDocument, SavedService } from '../types';
+import type { UserDocument, SavedService, UserProfile } from '../types';
 
 interface User {
   email: string;
@@ -19,6 +19,7 @@ interface CalculationData {
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
+  userProfile: UserProfile | null;
   authState: AuthState;
   documents: UserDocument[];
   login: (email: string, pass: string) => Promise<void>;
@@ -28,18 +29,20 @@ interface AuthContextType {
   hideAuthModal: () => void;
   saveCalculation: (data: CalculationData) => void;
   deleteCurrentUserDocument: (docId: string) => void;
+  updateUserProfile: (profile: UserProfile) => Promise<void>;
   // Admin functions
   getAllUsers: () => User[];
   getUserDocuments: (email: string) => UserDocument[];
   deleteUserDocument: (userEmail: string, docId: string) => void;
-  addUserDocument: (userEmail: string, docType: 'Договор' | 'Протокол') => void;
+  addUserDocument: (userEmail: string, docType: 'Договор' | 'Протокол' | 'Отчет', file?: { name: string, content: string }) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// В реальном приложении здесь был бы API call. Мы симулируем базу данных.
+// Симуляция базы данных через LocalStorage
 const MOCK_USER_DB_KEY = 'mockUserDatabase';
 const MOCK_DOCS_PREFIX = 'mockUserDocs_';
+const MOCK_PROFILE_PREFIX = 'mockUserProfile_';
 
 const getMockUsers = (): Map<string, string> => {
     try {
@@ -67,9 +70,23 @@ const saveMockDocs = (email: string, docs: UserDocument[]) => {
     localStorage.setItem(`${MOCK_DOCS_PREFIX}${email}`, JSON.stringify(docs));
 }
 
+const getMockProfile = (email: string): UserProfile => {
+    try {
+        const profile = localStorage.getItem(`${MOCK_PROFILE_PREFIX}${email}`);
+        return profile ? JSON.parse(profile) : { firstName: '', lastName: '', phone: '', company: '', position: '' };
+    } catch {
+        return { firstName: '', lastName: '', phone: '', company: '', position: '' };
+    }
+}
+
+const saveMockProfile = (email: string, profile: UserProfile) => {
+    localStorage.setItem(`${MOCK_PROFILE_PREFIX}${email}`, JSON.stringify(profile));
+}
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [authState, setAuthState] = useState<AuthState>({ isModalOpen: false, defaultView: 'login' });
   const [documents, setDocuments] = useState<UserDocument[]>([]);
   const [usersDB, setUsersDB] = useState<Map<string, string>>(getMockUsers());
@@ -82,6 +99,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setUser(parsedUser);
       setIsAuthenticated(true);
       setDocuments(getMockDocs(parsedUser.email));
+      setUserProfile(getMockProfile(parsedUser.email));
     }
   }, []);
 
@@ -94,10 +112,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             if (users.has(lowerCaseEmail) && users.get(lowerCaseEmail) === pass || lowerCaseEmail === 'admin@test.com') {
                 const isAdmin = lowerCaseEmail === 'admin@test.com';
                 const loggedInUser: User = { email: lowerCaseEmail, role: isAdmin ? 'admin' : 'user' };
+                
                 setUser(loggedInUser);
                 setIsAuthenticated(true);
                 localStorage.setItem('currentUser', JSON.stringify(loggedInUser));
+                
+                // Load user data
                 setDocuments(getMockDocs(lowerCaseEmail));
+                setUserProfile(getMockProfile(lowerCaseEmail));
+                
                 hideAuthModal();
                 resolve();
             } else {
@@ -111,12 +134,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             const users = getMockUsers();
-            if (users.has(email.toLowerCase())) {
+            const lowerEmail = email.toLowerCase();
+            if (users.has(lowerEmail)) {
                 reject(new Error('Пользователь с таким email уже существует.'));
             } else {
-                users.set(email.toLowerCase(), pass);
+                // Save user
+                users.set(lowerEmail, pass);
                 saveMockUsers(users);
                 setUsersDB(new Map(users));
+                
+                // Auto login after register
+                const newUser: User = { email: lowerEmail, role: 'user' };
+                setUser(newUser);
+                setIsAuthenticated(true);
+                localStorage.setItem('currentUser', JSON.stringify(newUser));
+                
+                // Initialize empty data
+                const initialProfile = { firstName: '', lastName: '', phone: '', company: '', position: '' };
+                setUserProfile(initialProfile);
+                setDocuments([]);
+                
                 resolve();
             }
         }, 500);
@@ -125,9 +162,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const logout = () => {
     setUser(null);
+    setUserProfile(null);
     setIsAuthenticated(false);
-    setDocuments([]); // Clear documents on logout
+    setDocuments([]); 
     localStorage.removeItem('currentUser');
+  };
+
+  const updateUserProfile = async (profile: UserProfile): Promise<void> => {
+      return new Promise((resolve) => {
+          if (!user) return;
+          setTimeout(() => {
+            setUserProfile(profile);
+            saveMockProfile(user.email, profile);
+            resolve();
+          }, 300);
+      });
   };
 
   const showAuthModal = (view: 'login' | 'register' = 'login') => {
@@ -164,8 +213,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Admin Functions
   const getAllUsers = (): User[] => {
-    // FIX: Explicitly type `email` as `any` to resolve incorrect type inference to `unknown`.
-    // This allows calling `.toLowerCase()` and satisfies the `User` type requirement.
     return Array.from(usersDB.keys()).map((email: any) => ({
         email,
         role: email.toLowerCase() === 'admin@test.com' ? 'admin' : 'user',
@@ -182,13 +229,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       saveMockDocs(userEmail, updatedDocs);
   };
 
-  const addUserDocument = (userEmail: string, docType: 'Договор' | 'Протокол') => {
+  const addUserDocument = (userEmail: string, docType: 'Договор' | 'Протокол' | 'Отчет', file?: { name: string, content: string }) => {
       const currentDocs = getMockDocs(userEmail);
+      let idPrefix = 'doc';
+      if (docType === 'Договор') idPrefix = 'agr';
+      if (docType === 'Протокол') idPrefix = 'prt';
+      if (docType === 'Отчет') idPrefix = 'rep';
+
+      let fileName = `mock-${docType === 'Договор' ? 'agreement' : docType === 'Протокол' ? 'protocol' : 'report'}.pdf`;
+      if (file) {
+          fileName = file.name;
+      }
+
       const newDoc: UserDocument = {
-          id: `${docType === 'Договор' ? 'agr' : 'prt'}-${Date.now()}`,
+          id: `${idPrefix}-${Date.now()}`,
           date: new Date().toLocaleDateString('ru-RU'),
           type: docType,
-          fileName: `mock-${docType === 'Договор' ? 'agreement' : 'protocol'}.pdf`,
+          fileName: fileName,
+          fileUrl: file?.content,
       };
       const updatedDocs = [newDoc, ...currentDocs];
       saveMockDocs(userEmail, updatedDocs);
@@ -198,6 +256,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const value = {
     isAuthenticated,
     user,
+    userProfile,
     authState,
     documents,
     login,
@@ -207,6 +266,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     hideAuthModal,
     saveCalculation,
     deleteCurrentUserDocument,
+    updateUserProfile,
     getAllUsers,
     getUserDocuments,
     deleteUserDocument,
