@@ -1,9 +1,9 @@
 import React from 'react';
 import { NavLink, Routes, Route, Navigate } from 'react-router-dom';
-import { ChevronRightIcon, DocumentTextIcon, UserCircleIcon, BriefcaseIcon } from '../IconComponents';
-import Dashboard from './Dashboard';
-import Profile from './Profile';
-import Documents from './Documents';
+import { ChevronRightIcon, DocumentTextIcon, UserCircleIcon, BriefcaseIcon } from '../IconComponents.tsx';
+import Dashboard from './Dashboard.tsx';
+import Profile from './Profile.tsx';
+import Documents from './Documents.tsx';
 
 const accountLinks = [
     { href: '/online/account', label: 'Мои заказы', icon: BriefcaseIcon, end: true },

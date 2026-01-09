@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import type { UserDocument } from '../../types';
-import { DocumentTextIcon, SearchIcon, TrashIcon } from '../IconComponents';
+import { DocumentTextIcon, SearchIcon, TrashIcon, ArrowDownTrayIcon } from '../IconComponents';
 import { InfoModal } from '../Modals';
 
 const CalculationDetailsModal: React.FC<{ document: UserDocument; onClose: () => void }> = ({ document, onClose }) => {
@@ -53,7 +53,6 @@ const Documents: React.FC = () => {
     
     const handleViewFile = (doc: UserDocument) => {
         if (doc.fileUrl) {
-            // Open base64 or uploaded file
             const newWindow = window.open();
             if (newWindow) {
                 newWindow.document.write(`<iframe src="${doc.fileUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
@@ -61,12 +60,54 @@ const Documents: React.FC = () => {
                  alert("Разрешите всплывающие окна для просмотра файла.");
             }
         } else if (doc.fileName) {
-            // Fallback for mock files
             const filePath = `/assets/docs/${doc.fileName}`;
             window.open(filePath, '_blank', 'noopener,noreferrer');
         } else {
             alert('Файл для этого документа не найден.');
         }
+    }
+
+    const handleDownloadFile = (doc: UserDocument) => {
+        // Если это расчет, создаем текстовый файл для скачивания на лету
+        if (doc.type === 'Расчет') {
+            const servicesText = doc.services?.map(s => `- ${s.name} (x${s.quantity}): ${(s.price * s.quantity).toLocaleString()} руб.`).join('\n') || 'Услуги не указаны';
+            const fileContent = `РАСЧЕТ СТОИМОСТИ УСЛУГ №${doc.id}\nДата: ${doc.date}\n\nСПИСОК УСЛУГ:\n${servicesText}\n\nИТОГО: ${doc.totalCost?.toLocaleString()} руб.\n\n---------------------------\nИспытательный центр ИГ КарНЦ РАН\nг. Петрозаводск, ул. Пушкинская, 11`;
+            
+            const blob = new Blob([fileContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Расчет_${doc.id}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            return;
+        }
+
+        // Если это файл с URL (base64 или загруженный через админку)
+        if (doc.fileUrl) {
+            const a = document.createElement('a');
+            a.href = doc.fileUrl;
+            a.download = doc.fileName || `документ_${doc.id}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            return;
+        }
+
+        // Если это файл, который должен быть на сервере (статический ассет)
+        if (doc.fileName) {
+            const a = document.createElement('a');
+            a.href = `/assets/docs/${doc.fileName}`;
+            a.download = doc.fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            return;
+        }
+
+        alert('Файл для этого документа не найден.');
     }
 
     const getDocumentTypeClass = (type: UserDocument['type']) => {
@@ -120,29 +161,40 @@ const Documents: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
                                             {doc.type === 'Расчет' ? `${doc.totalCost?.toLocaleString('ru-RU')} ₽` : (
-                                                <span title={doc.fileName} className="block max-w-[200px] truncate">
-                                                    {doc.fileName || 'Нет файла'}
+                                                <span title={doc.fileName} className="block max-w-[200px] truncate italic text-gray-500 font-normal">
+                                                    {doc.fileName || 'Без файла'}
                                                 </span>
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            {doc.type === 'Расчет' ? (
-                                                 <div className="flex items-center gap-4">
-                                                    <button onClick={() => setSelectedDocument(doc)} className="text-blue-600 hover:text-blue-900 flex items-center gap-1" title="Посмотреть детали расчета">
-                                                        <SearchIcon className="w-4 h-4" />
-                                                        Детали
-                                                    </button>
-                                                    <button onClick={() => handleDelete(doc.id)} className="text-red-600 hover:text-red-900 flex items-center gap-1" title="Удалить расчет">
-                                                        <TrashIcon className="w-4 h-4" />
-                                                        Удалить
-                                                    </button>
-                                                 </div>
-                                            ) : (
-                                                <button onClick={() => handleViewFile(doc)} className="text-blue-600 hover:text-blue-900 flex items-center gap-1" title="Просмотреть файл">
-                                                    <DocumentTextIcon className="w-4 h-4" />
-                                                    Просмотреть
-                                                </button>
-                                            )}
+                                            <div className="flex items-center gap-4">
+                                                {doc.type === 'Расчет' ? (
+                                                    <>
+                                                        <button onClick={() => setSelectedDocument(doc)} className="text-blue-600 hover:text-blue-900 flex items-center gap-1" title="Посмотреть детали">
+                                                            <SearchIcon className="w-4 h-4" />
+                                                            Детали
+                                                        </button>
+                                                        <button onClick={() => handleDownloadFile(doc)} className="text-green-600 hover:text-green-800 flex items-center gap-1" title="Скачать расчет">
+                                                            <ArrowDownTrayIcon className="w-4 h-4" />
+                                                            Скачать
+                                                        </button>
+                                                        <button onClick={() => handleDelete(doc.id)} className="text-red-400 hover:text-red-600" title="Удалить">
+                                                            <TrashIcon className="w-4 h-4" />
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button onClick={() => handleViewFile(doc)} className="text-blue-600 hover:text-blue-900 flex items-center gap-1" title="Просмотреть">
+                                                            <DocumentTextIcon className="w-4 h-4" />
+                                                            Просмотр
+                                                        </button>
+                                                        <button onClick={() => handleDownloadFile(doc)} className="text-green-600 hover:text-green-800 flex items-center gap-1" title="Скачать файл">
+                                                            <ArrowDownTrayIcon className="w-4 h-4" />
+                                                            Скачать
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -153,7 +205,7 @@ const Documents: React.FC = () => {
                     <div className="text-center py-10 bg-gray-50 rounded-lg">
                         <DocumentTextIcon className="w-12 h-12 mx-auto text-gray-400" />
                         <h3 className="mt-2 text-lg font-medium text-gray-900">Документы не найдены</h3>
-                        <p className="mt-1 text-sm text-gray-500">Вы еще не сохранили ни одного расчета. Воспользуйтесь калькулятором.</p>
+                        <p className="mt-1 text-sm text-gray-500">Вы еще не сохранили ни одного расчета.</p>
                     </div>
                 )}
             </div>

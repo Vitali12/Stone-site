@@ -1,6 +1,5 @@
-
-import type { NavLink, Benefit, Service, Testimonial, Article, GostDocument, Order } from './types';
-import { BeakerIcon, ChartBarIcon, DocumentTextIcon, ShieldCheckIcon, ScaleIcon, SparklesIcon, UsersIcon, GlobeAltIcon, MapIcon, PhoneIcon, EnvelopeIcon, CubeIcon, AcademicCapIcon, BookOpenIcon, VideoCameraIcon, QuestionMarkCircleIcon, TrophyIcon, StarIcon, BriefcaseIcon, UserCircleIcon, ShoppingCartIcon, MapPinIcon, DocumentDuplicateIcon } from './components/IconComponents';
+import type { NavLink, Benefit, Service, Testimonial, Article, GostDocument, Order } from './types.ts';
+import { BeakerIcon, ChartBarIcon, DocumentTextIcon, ShieldCheckIcon, ScaleIcon, SparklesIcon, UsersIcon, GlobeAltIcon, MapIcon, PhoneIcon, EnvelopeIcon, CubeIcon, AcademicCapIcon, BookOpenIcon, VideoCameraIcon, QuestionMarkCircleIcon, TrophyIcon, StarIcon, BriefcaseIcon, UserCircleIcon, ShoppingCartIcon, MapPinIcon, DocumentDuplicateIcon } from './components/IconComponents.tsx';
 import React from 'react';
 
 export const NAV_LINKS: NavLink[] = [

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { NAV_LINKS } from '../constants';
-import type { NavLink } from '../types';
-import { BeakerIcon, MenuIcon, XIcon, ChevronDownIcon, UserCircleIcon } from './IconComponents';
-import { useAuth } from '../hooks/useAuth';
+import { NAV_LINKS } from '../constants.ts';
+import type { NavLink } from '../types.ts';
+import { BeakerIcon, MenuIcon, XIcon, ChevronDownIcon, UserCircleIcon } from './IconComponents.tsx';
+import { useAuth } from '../hooks/useAuth.ts';
 
 const UserMenu: React.FC = () => {
     const { user, logout } = useAuth();

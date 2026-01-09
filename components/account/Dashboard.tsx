@@ -1,7 +1,7 @@
 import React from 'react';
-import { MOCK_ORDERS } from '../../constants';
-import type { OrderStatus } from '../../types';
-import { DocumentTextIcon } from '../IconComponents';
+import { MOCK_ORDERS } from '../../constants.ts';
+import type { OrderStatus } from '../../types.ts';
+import { DocumentTextIcon } from '../IconComponents.tsx';
 
 const getStatusClass = (status: OrderStatus) => {
     switch (status) {
