@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { NAV_LINKS } from '../constants.ts';
-import type { NavLink } from '../types.ts';
 import { BeakerIcon, MenuIcon, XIcon, ChevronDownIcon, UserCircleIcon } from './IconComponents.tsx';
 import { useAuth } from '../hooks/useAuth.ts';
 
-const UserMenu: React.FC = () => {
+function UserMenu() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const node = useRef<HTMLDivElement>(null);
+    const node = useRef(null);
 
-    const handleClickOutside = (e: MouseEvent) => {
-        if (node.current?.contains(e.target as Node)) return;
+    const handleClickOutside = (e) => {
+        if (node.current && node.current.contains(e.target)) return;
         setIsOpen(false);
     };
 
@@ -67,14 +66,14 @@ const UserMenu: React.FC = () => {
     );
 }
 
-const NavItem: React.FC<{ item: NavLink, closeMenu: () => void }> = ({ item, closeMenu }) => {
+function NavItem({ item, closeMenu }) {
   const [isOpen, setIsOpen] = useState(false);
-  const node = useRef<HTMLLIElement>(null);
+  const node = useRef(null);
   const navigate = useNavigate();
   const { isAuthenticated, showAuthModal } = useAuth();
 
-  const handleClickOutside = (e: MouseEvent) => {
-    if (node.current?.contains(e.target as Node)) return;
+  const handleClickOutside = (e) => {
+    if (node.current && node.current.contains(e.target)) return;
     setIsOpen(false);
   };
 
@@ -85,7 +84,7 @@ const NavItem: React.FC<{ item: NavLink, closeMenu: () => void }> = ({ item, clo
     };
   }, []);
 
-  const handleLinkClick = (e: React.MouseEvent, href: string, isProtected?: boolean) => {
+  const handleLinkClick = (e, href, isProtected) => {
     e.preventDefault();
     if (isProtected && !isAuthenticated) {
         showAuthModal();
@@ -97,7 +96,7 @@ const NavItem: React.FC<{ item: NavLink, closeMenu: () => void }> = ({ item, clo
     navigate(href);
   };
   
-  const handleParentClick = (e: React.MouseEvent) => {
+  const handleParentClick = (e) => {
      if (item.children) {
          e.preventDefault();
          setIsOpen(!isOpen);
@@ -106,7 +105,6 @@ const NavItem: React.FC<{ item: NavLink, closeMenu: () => void }> = ({ item, clo
      }
   }
 
-  // Hide protected links for non-authenticated users in mobile menu
   if (item.isProtected && !isAuthenticated && !item.children) {
       return null;
   }
@@ -138,14 +136,14 @@ const NavItem: React.FC<{ item: NavLink, closeMenu: () => void }> = ({ item, clo
       )}
     </li>
   );
-};
+}
 
 
-const DesktopNavLink: React.FC<{ item: NavLink }> = ({ item }) => {
+function DesktopNavLink({ item }) {
     const navigate = useNavigate();
     const { isAuthenticated, showAuthModal } = useAuth();
 
-    const handleClick = (e: React.MouseEvent, href: string, isProtected?: boolean) => {
+    const handleClick = (e, href, isProtected) => {
         e.preventDefault();
         if (isProtected && !isAuthenticated) {
             showAuthModal();
@@ -158,7 +156,6 @@ const DesktopNavLink: React.FC<{ item: NavLink }> = ({ item }) => {
       return null;
     }
     
-    // Special styling for protected top-level links for logged-in users
     if(item.isProtected && isAuthenticated && !item.children) {
         return (
              <li>
@@ -186,10 +183,10 @@ const DesktopNavLink: React.FC<{ item: NavLink }> = ({ item }) => {
             )}
          </li>
     );
-};
+}
 
 
-const Header: React.FC = () => {
+function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, user, logout, showAuthModal } = useAuth();
@@ -274,6 +271,6 @@ const Header: React.FC = () => {
       </div>
     </header>
   );
-};
+}
 
 export default Header;

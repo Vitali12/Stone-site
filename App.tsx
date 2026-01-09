@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header.tsx';
@@ -18,15 +17,15 @@ import { useAuth } from './hooks/useAuth.ts';
 import AdminPage from './components/admin/AdminPage.tsx';
 import UserDocumentsPage from './components/admin/UserDocumentsPage.tsx';
 
-function AdminRoute({ element }: { element: React.ReactElement }) {
+const AdminRoute: React.FC<{ element: React.ReactElement }> = ({ element }) => {
     const { user } = useAuth();
     if (!user || user.role !== 'admin') {
         return <Navigate to="/online/account" replace />;
     }
     return element;
-}
+};
 
-function App() {
+const App: React.FC = () => {
   return (
       <HashRouter>
         <div className="flex flex-col min-h-screen bg-gray-50">
@@ -58,7 +57,6 @@ function App() {
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminRoute element={<AdminPage />} />} />
               <Route path="/admin/user/:email" element={<AdminRoute element={<UserDocumentsPage />} />} />
-
             </Routes>
           </main>
           <Footer />
@@ -66,6 +64,6 @@ function App() {
         <AuthModal />
       </HashRouter>
   );
-}
+};
 
 export default App;
