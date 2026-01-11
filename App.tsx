@@ -1,21 +1,21 @@
 import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Header from './components/Header.tsx';
-import Footer from './components/Footer.tsx';
-import HomePage from './components/HomePage.tsx';
-import ServicesPage from './components/ServicesPage.tsx';
-import ContactPage from './components/ContactPage.tsx';
-import PlaceholderPage from './components/PlaceholderPage.tsx';
-import Calculator from './components/Calculator.tsx';
-import GostPage from './components/GostPage.tsx';
-import AboutPage from './components/AboutPage.tsx';
-import AuthModal from './components/AuthModal.tsx';
-import ProtectedRoute from './components/ProtectedRoute.tsx';
-import AccountPage from './components/account/AccountPage.tsx';
-import RadiologyArticlePage from './components/RadiologyArticlePage.tsx';
-import { useAuth } from './hooks/useAuth.ts';
-import AdminPage from './components/admin/AdminPage.tsx';
-import UserDocumentsPage from './components/admin/UserDocumentsPage.tsx';
+import { Header } from './components/Header';
+import { Footer } from './components/Footer';
+import { HomePage } from './components/HomePage';
+import { ServicesPage } from './components/ServicesPage';
+import { ContactPage } from './components/ContactPage';
+import { PlaceholderPage } from './components/PlaceholderPage';
+import { Calculator } from './components/Calculator';
+import { GostPage } from './components/GostPage';
+import { AboutPage } from './components/AboutPage';
+import { AuthModal } from './components/AuthModal';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { AccountPage } from './components/account/AccountPage';
+import { RadiologyArticlePage } from './components/RadiologyArticlePage';
+import { useAuth } from './hooks/useAuth';
+import { AdminPage } from './components/admin/AdminPage';
+import { UserDocumentsPage } from './components/admin/UserDocumentsPage';
 
 const AdminRoute: React.FC<{ element: React.ReactElement }> = ({ element }) => {
     const { user } = useAuth();
@@ -25,7 +25,7 @@ const AdminRoute: React.FC<{ element: React.ReactElement }> = ({ element }) => {
     return element;
 };
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   return (
       <HashRouter>
         <div className="flex flex-col min-h-screen bg-gray-50">
@@ -38,7 +38,8 @@ const App: React.FC = () => {
               <Route path="/portfolio" element={<PlaceholderPage title="Портфолио" />} />
               <Route path="/portfolio/*" element={<PlaceholderPage title="Портфолио" />} />
 
-              <Route path="/services/calculator" element={<ProtectedRoute element={<div className="container mx-auto py-16 px-4"><Calculator /></div>} />} />
+              {/* Калькулятор теперь доступен всем */}
+              <Route path="/services/calculator" element={<div className="container mx-auto py-16 px-4"><Calculator /></div>} />
               <Route path="/services/:category" element={<ServicesPage />} />
               <Route path="/services" element={<ServicesPage />} />
               
@@ -65,5 +66,3 @@ const App: React.FC = () => {
       </HashRouter>
   );
 };
-
-export default App;

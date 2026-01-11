@@ -1,16 +1,15 @@
-
 import React from 'react';
 import { NavLink, Routes, Route, Navigate } from 'react-router-dom';
 import { NAV_LINKS } from '../constants';
-import CompanyPage from './about/CompanyPage';
-import EquipmentPage from './about/EquipmentPage';
-import AboutPlaceholder from './about/AboutPlaceholder';
-import AccreditationPage from './about/AccreditationPage';
+import { CompanyPage } from './about/CompanyPage';
+import { EquipmentPage } from './about/EquipmentPage';
+import { AboutPlaceholder } from './about/AboutPlaceholder';
+import { AccreditationPage } from './about/AccreditationPage';
 import { ChevronRightIcon } from './IconComponents';
 
 const aboutLinks = NAV_LINKS.find(link => link.href === '/about')?.children || [];
 
-const AboutPage: React.FC = () => {
+export const AboutPage: React.FC = () => {
     return (
         <div className="container mx-auto px-4 py-16">
             <div className="text-center mb-12">
@@ -57,5 +56,3 @@ const AboutPage: React.FC = () => {
         </div>
     );
 };
-
-export default AboutPage;

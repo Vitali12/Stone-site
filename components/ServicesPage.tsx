@@ -1,10 +1,9 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import { COMPREHENSIVE_SERVICES, SERVICE_CATEGORIES } from '../constants.ts';
-import type { ComprehensiveService } from '../constants.ts';
-import { ChevronRightIcon } from './IconComponents.tsx';
-import { InfoModal } from './Modals.tsx';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { COMPREHENSIVE_SERVICES, SERVICE_CATEGORIES } from '../constants';
+import type { ComprehensiveService } from '../constants';
+import { ChevronRightIcon } from './IconComponents';
+import { InfoModal } from './Modals';
 
 const ServiceCard: React.FC<{ service: ComprehensiveService; onDetailsClick: (service: ComprehensiveService) => void; }> = ({ service, onDetailsClick }) => (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 group flex flex-col h-full">
@@ -31,7 +30,7 @@ const ServiceCard: React.FC<{ service: ComprehensiveService; onDetailsClick: (se
     </div>
 );
 
-const ServicesPage: React.FC = () => {
+export const ServicesPage: React.FC = () => {
     const params = useParams();
     const categoryFromUrl = params.category;
     const navigate = useNavigate();
@@ -139,5 +138,3 @@ const ServicesPage: React.FC = () => {
         </>
     );
 };
-
-export default ServicesPage;

@@ -1,9 +1,9 @@
 import React from 'react';
-import { NavLink, Routes, Route, Navigate } from 'react-router-dom';
-import { ChevronRightIcon, DocumentTextIcon, UserCircleIcon, BriefcaseIcon } from '../IconComponents.tsx';
-import Dashboard from './Dashboard.tsx';
-import Profile from './Profile.tsx';
-import Documents from './Documents.tsx';
+import { NavLink, Routes, Route } from 'react-router-dom';
+import { ChevronRightIcon, DocumentTextIcon, UserCircleIcon, BriefcaseIcon } from '../IconComponents';
+import { Dashboard } from './Dashboard';
+import { Profile } from './Profile';
+import { Documents } from './Documents';
 
 const accountLinks = [
     { href: '/online/account', label: 'Мои заказы', icon: BriefcaseIcon, end: true },
@@ -11,7 +11,7 @@ const accountLinks = [
     { href: 'profile', label: 'Профиль', icon: UserCircleIcon, end: false },
 ];
 
-const AccountPage: React.FC = () => {
+export const AccountPage: React.FC = () => {
     return (
         <div className="container mx-auto px-4 py-16">
             <div className="text-center mb-12">
@@ -59,5 +59,3 @@ const AccountPage: React.FC = () => {
         </div>
     );
 };
-
-export default AccountPage;

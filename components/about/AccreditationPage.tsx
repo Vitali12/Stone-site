@@ -1,14 +1,11 @@
-
 import React from 'react';
 
-// Новый набор изображений для действующей аккредитации (2024-2027)
 const certificateImages = Array.from(
   { length: 9 }, 
   (_, i) => `https://storage.googleapis.com/aai-web-samples/custom-applications/rock-lab/accreditation-2024-cert-${i + 1}.jpg`
 );
 
-
-const AccreditationPage: React.FC = () => {
+export const AccreditationPage: React.FC = () => {
     return (
         <div className="prose max-w-none text-gray-700">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Аккредитация и сертификаты</h2>
@@ -49,5 +46,3 @@ const AccreditationPage: React.FC = () => {
         </div>
     );
 };
-
-export default AccreditationPage;

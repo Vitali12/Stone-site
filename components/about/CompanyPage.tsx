@@ -1,7 +1,6 @@
-
 import React from 'react';
 
-const CompanyPage: React.FC = () => {
+export const CompanyPage: React.FC = () => {
     return (
         <div className="prose max-w-none text-gray-700">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">О компании</h2>
@@ -34,5 +33,3 @@ const CompanyPage: React.FC = () => {
         </div>
     );
 };
-
-export default CompanyPage;

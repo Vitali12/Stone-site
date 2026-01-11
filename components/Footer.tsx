@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BeakerIcon, PhoneIcon, EnvelopeIcon, MapIcon, ChatBubbleBottomCenterTextIcon } from './IconComponents.tsx';
+import { BeakerIcon, PhoneIcon, EnvelopeIcon, MapIcon, ChatBubbleBottomCenterTextIcon } from './IconComponents';
 
-const Footer: React.FC = () => {
+export const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-800 text-white">
       <div className="container mx-auto px-4 py-12">
@@ -75,5 +74,3 @@ const Footer: React.FC = () => {
     </footer>
   );
 };
-
-export default Footer;

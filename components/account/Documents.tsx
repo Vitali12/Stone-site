@@ -40,8 +40,7 @@ const CalculationDetailsModal: React.FC<{ document: UserDocument; onClose: () =>
     return <InfoModal title={`Детали расчета №${document.id.split('-')[1]}`} content={content as any} onClose={onClose} />;
 };
 
-
-const Documents: React.FC = () => {
+export const Documents: React.FC = () => {
     const { documents, deleteCurrentUserDocument } = useAuth();
     const [selectedDocument, setSelectedDocument] = useState<UserDocument | null>(null);
 
@@ -68,7 +67,6 @@ const Documents: React.FC = () => {
     }
 
     const handleDownloadFile = (doc: UserDocument) => {
-        // Если это расчет, создаем текстовый файл для скачивания на лету
         if (doc.type === 'Расчет') {
             const servicesText = doc.services?.map(s => `- ${s.name} (x${s.quantity}): ${(s.price * s.quantity).toLocaleString()} руб.`).join('\n') || 'Услуги не указаны';
             const fileContent = `РАСЧЕТ СТОИМОСТИ УСЛУГ №${doc.id}\nДата: ${doc.date}\n\nСПИСОК УСЛУГ:\n${servicesText}\n\nИТОГО: ${doc.totalCost?.toLocaleString()} руб.\n\n---------------------------\nИспытательный центр ИГ КарНЦ РАН\nг. Петрозаводск, ул. Пушкинская, 11`;
@@ -85,7 +83,6 @@ const Documents: React.FC = () => {
             return;
         }
 
-        // Если это файл с URL (base64 или загруженный через админку)
         if (doc.fileUrl) {
             const a = document.createElement('a');
             a.href = doc.fileUrl;
@@ -96,7 +93,6 @@ const Documents: React.FC = () => {
             return;
         }
 
-        // Если это файл, который должен быть на сервере (статический ассет)
         if (doc.fileName) {
             const a = document.createElement('a');
             a.href = `/assets/docs/${doc.fileName}`;
@@ -212,5 +208,3 @@ const Documents: React.FC = () => {
         </>
     );
 };
-
-export default Documents;

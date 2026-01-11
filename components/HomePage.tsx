@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { BENEFITS, POPULAR_SERVICES, TESTIMONIALS, ARTICLES } from '../constants.ts';
-import { ChevronRightIcon } from './IconComponents.tsx';
+import { BENEFITS, POPULAR_SERVICES, TESTIMONIALS, ARTICLES } from '../constants';
+import { ChevronRightIcon } from './IconComponents';
+import type { Benefit, Service, Article } from '../types';
 
 function HeroSection() {
   return (
@@ -44,7 +45,7 @@ function HeroSection() {
   );
 }
 
-function BenefitCard({ benefit }) {
+function BenefitCard({ benefit }: { benefit: Benefit }) {
   return (
     <div className="group p-8 bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:border-blue-100 transition-all duration-500 transform hover:-translate-y-2">
       <div className="flex items-center justify-center h-14 w-14 rounded-xl bg-blue-50 text-blue-600 mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
@@ -74,7 +75,7 @@ function BenefitsSection() {
   );
 }
 
-function ServiceCard({ service }) {
+function ServiceCard({ service }: { service: Service }) {
   return (
     <div className="bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden group flex flex-col h-full hover:shadow-2xl transition-all duration-500">
       <div className="h-2 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></div>
@@ -178,7 +179,7 @@ function TestimonialsSection() {
     );
 }
 
-function ArticleCard({ article }) {
+function ArticleCard({ article }: { article: Article }) {
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden group hover:shadow-2xl transition-all duration-500">
       <div className="relative h-56 overflow-hidden">
@@ -252,7 +253,7 @@ function CTASection() {
   );
 }
 
-function HomePage() {
+export function HomePage() {
   return (
     <div className="bg-white">
       <HeroSection />
@@ -264,5 +265,3 @@ function HomePage() {
     </div>
   );
 }
-
-export default HomePage;

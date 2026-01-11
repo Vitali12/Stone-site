@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth.ts';
+import { useAuth } from '../hooks/useAuth';
 
 interface ProtectedRouteProps {
   element: React.ReactElement;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
   const { isAuthenticated, showAuthModal } = useAuth();
   const location = useLocation();
 
@@ -22,5 +22,3 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
 
   return element;
 };
-
-export default ProtectedRoute;

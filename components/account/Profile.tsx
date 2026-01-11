@@ -3,7 +3,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import type { UserProfile } from '../../types';
 
-const Profile: React.FC = () => {
+export const Profile: React.FC = () => {
     const { user, userProfile, updateUserProfile, logout } = useAuth();
     const navigate = useNavigate();
     
@@ -161,5 +161,3 @@ const Profile: React.FC = () => {
         </div>
     );
 };
-
-export default Profile;

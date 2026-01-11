@@ -3,7 +3,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { Link } from 'react-router-dom';
 import { UsersIcon, ChevronRightIcon } from '../IconComponents';
 
-const AdminPage: React.FC = () => {
+export const AdminPage: React.FC = () => {
     const { getAllUsers } = useAuth();
     const users = getAllUsers();
 
@@ -43,5 +43,3 @@ const AdminPage: React.FC = () => {
         </div>
     );
 };
-
-export default AdminPage;

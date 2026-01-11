@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { NAV_LINKS } from '../constants.ts';
-import { BeakerIcon, MenuIcon, XIcon, ChevronDownIcon, UserCircleIcon } from './IconComponents.tsx';
-import { useAuth } from '../hooks/useAuth.ts';
+import { NAV_LINKS } from '../constants';
+import { BeakerIcon, MenuIcon, XIcon, ChevronDownIcon, UserCircleIcon } from './IconComponents';
+import { useAuth } from '../hooks/useAuth';
+import type { NavLink } from '../types';
 
 function UserMenu() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const node = useRef(null);
+    const node = useRef<HTMLDivElement>(null);
 
-    const handleClickOutside = (e) => {
-        if (node.current && node.current.contains(e.target)) return;
+    const handleClickOutside = (e: MouseEvent) => {
+        if (node.current && node.current.contains(e.target as Node)) return;
         setIsOpen(false);
     };
 
@@ -66,14 +67,19 @@ function UserMenu() {
     );
 }
 
-function NavItem({ item, closeMenu }) {
+interface NavItemProps {
+  item: NavLink;
+  closeMenu: () => void;
+}
+
+function NavItem({ item, closeMenu }: NavItemProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const node = useRef(null);
+  const node = useRef<HTMLLIElement>(null);
   const navigate = useNavigate();
   const { isAuthenticated, showAuthModal } = useAuth();
 
-  const handleClickOutside = (e) => {
-    if (node.current && node.current.contains(e.target)) return;
+  const handleClickOutside = (e: MouseEvent) => {
+    if (node.current && node.current.contains(e.target as Node)) return;
     setIsOpen(false);
   };
 
@@ -84,7 +90,7 @@ function NavItem({ item, closeMenu }) {
     };
   }, []);
 
-  const handleLinkClick = (e, href, isProtected) => {
+  const handleLinkClick = (e: React.MouseEvent, href: string, isProtected?: boolean) => {
     e.preventDefault();
     if (isProtected && !isAuthenticated) {
         showAuthModal();
@@ -96,7 +102,7 @@ function NavItem({ item, closeMenu }) {
     navigate(href);
   };
   
-  const handleParentClick = (e) => {
+  const handleParentClick = (e: React.MouseEvent) => {
      if (item.children) {
          e.preventDefault();
          setIsOpen(!isOpen);
@@ -139,11 +145,11 @@ function NavItem({ item, closeMenu }) {
 }
 
 
-function DesktopNavLink({ item }) {
+function DesktopNavLink({ item }: { item: NavLink }) {
     const navigate = useNavigate();
     const { isAuthenticated, showAuthModal } = useAuth();
 
-    const handleClick = (e, href, isProtected) => {
+    const handleClick = (e: React.MouseEvent, href: string, isProtected?: boolean) => {
         e.preventDefault();
         if (isProtected && !isAuthenticated) {
             showAuthModal();
@@ -186,7 +192,7 @@ function DesktopNavLink({ item }) {
 }
 
 
-function Header() {
+export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, user, logout, showAuthModal } = useAuth();
@@ -272,5 +278,3 @@ function Header() {
     </header>
   );
 }
-
-export default Header;

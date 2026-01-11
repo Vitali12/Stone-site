@@ -1,11 +1,10 @@
-
 import React from 'react';
 
 interface AboutPlaceholderProps {
   title: string;
 }
 
-const AboutPlaceholder: React.FC<AboutPlaceholderProps> = ({ title }) => {
+export const AboutPlaceholder: React.FC<AboutPlaceholderProps> = ({ title }) => {
   return (
     <div>
       <h2 className="text-2xl font-bold text-gray-800 mb-4">{title}</h2>
@@ -18,5 +17,3 @@ const AboutPlaceholder: React.FC<AboutPlaceholderProps> = ({ title }) => {
     </div>
   );
 };
-
-export default AboutPlaceholder;

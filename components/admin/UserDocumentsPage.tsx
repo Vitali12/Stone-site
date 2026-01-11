@@ -2,9 +2,9 @@ import React, { useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import type { UserDocument } from '../../types';
-import { DocumentTextIcon, SearchIcon, TrashIcon, PlusIcon } from '../IconComponents';
+import { DocumentTextIcon, TrashIcon, PlusIcon } from '../IconComponents';
 
-const UserDocumentsPage: React.FC = () => {
+export const UserDocumentsPage: React.FC = () => {
     const { email } = useParams<{ email: string }>();
     const decodedEmail = email ? decodeURIComponent(email) : '';
     
@@ -32,13 +32,6 @@ const UserDocumentsPage: React.FC = () => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file || !activeDocType) return;
-
-        // Simple size check for LocalStorage (warn if > 3MB)
-        if (file.size > 3 * 1024 * 1024) {
-             if(!window.confirm("Файл превышает 3МБ. Это может переполнить локальное хранилище браузера. Продолжить?")) {
-                 return;
-             }
-        }
 
         const reader = new FileReader();
         reader.onload = (event) => {
@@ -139,5 +132,3 @@ const UserDocumentsPage: React.FC = () => {
         </div>
     );
 };
-
-export default UserDocumentsPage;

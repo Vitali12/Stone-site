@@ -30,7 +30,6 @@ interface AuthContextType {
   saveCalculation: (data: CalculationData) => void;
   deleteCurrentUserDocument: (docId: string) => void;
   updateUserProfile: (profile: UserProfile) => Promise<void>;
-  // Admin functions
   getAllUsers: () => User[];
   getUserDocuments: (email: string) => UserDocument[];
   deleteUserDocument: (userEmail: string, docId: string) => void;
@@ -39,7 +38,6 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Симуляция базы данных через LocalStorage
 const MOCK_USER_DB_KEY = 'mockUserDatabase';
 const MOCK_DOCS_PREFIX = 'mockUserDocs_';
 const MOCK_PROFILE_PREFIX = 'mockUserProfile_';
@@ -92,14 +90,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [usersDB, setUsersDB] = useState<Map<string, string>>(getMockUsers());
 
   useEffect(() => {
-    // Проверяем наличие "сессии" при загрузке приложения
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      setIsAuthenticated(true);
-      setDocuments(getMockDocs(parsedUser.email));
-      setUserProfile(getMockProfile(parsedUser.email));
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+        setDocuments(getMockDocs(parsedUser.email));
+        setUserProfile(getMockProfile(parsedUser.email));
+      } catch (e) {
+        localStorage.removeItem('currentUser');
+      }
     }
   }, []);
 
@@ -107,9 +108,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
      return new Promise((resolve, reject) => {
         setTimeout(() => {
             const users = getMockUsers();
-            const lowerCaseEmail = email.toLowerCase();
+            const lowerCaseEmail = email.toLowerCase().trim();
+            const storedPass = users.get(lowerCaseEmail);
             
-            if (users.has(lowerCaseEmail) && users.get(lowerCaseEmail) === pass || lowerCaseEmail === 'admin@test.com') {
+            if ((storedPass && storedPass === pass) || (lowerCaseEmail === 'admin@test.com' && pass === 'admin')) {
                 const isAdmin = lowerCaseEmail === 'admin@test.com';
                 const loggedInUser: User = { email: lowerCaseEmail, role: isAdmin ? 'admin' : 'user' };
                 
@@ -117,7 +119,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 setIsAuthenticated(true);
                 localStorage.setItem('currentUser', JSON.stringify(loggedInUser));
                 
-                // Load user data
                 setDocuments(getMockDocs(lowerCaseEmail));
                 setUserProfile(getMockProfile(lowerCaseEmail));
                 
@@ -126,7 +127,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             } else {
                 reject(new Error('Неверный email или пароль.'));
             }
-        }, 500);
+        }, 300);
      });
   };
 
@@ -134,29 +135,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             const users = getMockUsers();
-            const lowerEmail = email.toLowerCase();
+            const lowerEmail = email.toLowerCase().trim();
             if (users.has(lowerEmail)) {
                 reject(new Error('Пользователь с таким email уже существует.'));
             } else {
-                // Save user
                 users.set(lowerEmail, pass);
                 saveMockUsers(users);
                 setUsersDB(new Map(users));
                 
-                // Auto login after register
                 const newUser: User = { email: lowerEmail, role: 'user' };
                 setUser(newUser);
                 setIsAuthenticated(true);
                 localStorage.setItem('currentUser', JSON.stringify(newUser));
                 
-                // Initialize empty data
                 const initialProfile = { firstName: '', lastName: '', phone: '', company: '', position: '' };
                 setUserProfile(initialProfile);
                 setDocuments([]);
                 
                 resolve();
             }
-        }, 500);
+        }, 300);
     });
   };
 
@@ -175,7 +173,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setUserProfile(profile);
             saveMockProfile(user.email, profile);
             resolve();
-          }, 300);
+          }, 200);
       });
   };
 
@@ -205,15 +203,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const deleteCurrentUserDocument = (docId: string) => {
     if (!user) return;
-    const currentDocs = getMockDocs(user.email);
-    const updatedDocs = currentDocs.filter(d => d.id !== docId);
+    const updatedDocs = documents.filter(d => d.id !== docId);
     setDocuments(updatedDocs);
     saveMockDocs(user.email, updatedDocs);
   };
 
-  // Admin Functions
   const getAllUsers = (): User[] => {
-    return Array.from(usersDB.keys()).map((email: any) => ({
+    return Array.from(usersDB.keys()).map((email: string) => ({
         email,
         role: email.toLowerCase() === 'admin@test.com' ? 'admin' : 'user',
     }));
@@ -231,15 +227,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const addUserDocument = (userEmail: string, docType: 'Договор' | 'Протокол' | 'Отчет', file?: { name: string, content: string }) => {
       const currentDocs = getMockDocs(userEmail);
-      let idPrefix = 'doc';
-      if (docType === 'Договор') idPrefix = 'agr';
-      if (docType === 'Протокол') idPrefix = 'prt';
-      if (docType === 'Отчет') idPrefix = 'rep';
-
-      let fileName = `mock-${docType === 'Договор' ? 'agreement' : docType === 'Протокол' ? 'protocol' : 'report'}.pdf`;
-      if (file) {
-          fileName = file.name;
-      }
+      let idPrefix = docType === 'Договор' ? 'agr' : docType === 'Протокол' ? 'prt' : 'rep';
+      const fileName = file ? file.name : `mock-${docType}.pdf`;
 
       const newDoc: UserDocument = {
           id: `${idPrefix}-${Date.now()}`,
@@ -252,26 +241,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       saveMockDocs(userEmail, updatedDocs);
   };
 
-
-  const value = {
-    isAuthenticated,
-    user,
-    userProfile,
-    authState,
-    documents,
-    login,
-    logout,
-    register,
-    showAuthModal,
-    hideAuthModal,
-    saveCalculation,
-    deleteCurrentUserDocument,
-    updateUserProfile,
-    getAllUsers,
-    getUserDocuments,
-    deleteUserDocument,
-    addUserDocument,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{
+      isAuthenticated, user, userProfile, authState, documents,
+      login, logout, register, showAuthModal, hideAuthModal,
+      saveCalculation, deleteCurrentUserDocument, updateUserProfile,
+      getAllUsers, getUserDocuments, deleteUserDocument, addUserDocument,
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

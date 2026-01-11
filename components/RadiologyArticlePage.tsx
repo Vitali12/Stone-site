@@ -7,7 +7,7 @@ const SourceLink: React.FC<{ href: string; number: number }> = ({ href, number }
     </sup>
 );
 
-const RadiologyArticlePage: React.FC = () => {
+export const RadiologyArticlePage: React.FC = () => {
   return (
     <div className="bg-white py-16">
       <div className="container mx-auto px-4">
@@ -156,5 +156,3 @@ const RadiologyArticlePage: React.FC = () => {
     </div>
   );
 };
-
-export default RadiologyArticlePage;

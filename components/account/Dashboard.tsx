@@ -1,7 +1,7 @@
 import React from 'react';
-import { MOCK_ORDERS } from '../../constants.ts';
-import type { OrderStatus } from '../../types.ts';
-import { DocumentTextIcon } from '../IconComponents.tsx';
+import { MOCK_ORDERS } from '../../constants';
+import type { OrderStatus } from '../../types';
+import { DocumentTextIcon } from '../IconComponents';
 
 const getStatusClass = (status: OrderStatus) => {
     switch (status) {
@@ -18,8 +18,7 @@ const getStatusClass = (status: OrderStatus) => {
     }
 };
 
-
-const Dashboard: React.FC = () => {
+export const Dashboard: React.FC = () => {
     return (
         <div>
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Мои заказы</h2>
@@ -79,5 +78,3 @@ const Dashboard: React.FC = () => {
         </div>
     );
 };
-
-export default Dashboard;
